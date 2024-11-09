@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
 import path from "path";
+import express from "express";
+import cors from "cors";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,9 +24,19 @@ import Review from "./models/Review.js";
 import Tag from "./models/Tag.js";
 import User from "./models/User.js";
 import UserSavedRecipe from "./models/UserSavedRecipe.js";
+import registerRoute from './routes/Register.js';
+import loginRoute from './routes/Login.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+//
+app.use(express.json());
+app.use(cors());
+//api requests
+app.use('/api/register', registerRoute);
+app.use('/api/login', loginRoute);
+//
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
