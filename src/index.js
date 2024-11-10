@@ -9,22 +9,28 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 import express from "express";
 import { sequelize } from "../config/dbConfig.js";
+import RecipesRouter from './routes/recipes.js';
+import { associateModels } from './models/index.js'; // Import the associateModels function
+
 
 // models
+import Recipe from "./models/Recipe.js";
 import ActivityHistory from "./models/ActivityHistory.js";
 import Category from "./models/Category.js";
 import Ingredient from "./models/Ingredient.js";
 import Preference from "./models/Preference.js";
-import Recipe from "./models/Recipe.js";
 import RecipeIngredient from "./models/RecipeIngredient.js";
 import RecipeStep from "./models/RecipeStep.js";
 import Review from "./models/Review.js";
-import Tag from "./models/Tag.js";
 import User from "./models/User.js";
 import UserSavedRecipe from "./models/UserSavedRecipe.js";
+import Tag from "./models/Tag.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use("/api", RecipesRouter)
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -47,9 +53,10 @@ const createConnection = async () => {
   }
 
   // Sync the models (create tables if they do not exist)
-  await sequelize.sync(
-    { force: true } //! only for development
-  );
+  // await sequelize.sync(
+  //   // { force: true } //! only for development
+  // );
+  associateModels();
 };
 
 createConnection();

@@ -1,6 +1,9 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../../config/dbConfig.js';
 
+import Category from "./Category.js";
+import Tag from "./Tag.js";
+
 const Recipe = sequelize.define('Recipe', {
   recipe_id: {
     type: DataTypes.INTEGER,
@@ -19,9 +22,13 @@ const Recipe = sequelize.define('Recipe', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  category: {
-    type: DataTypes.STRING,
-    allowNull: false
+  category_id: { // Use category_id instead of category for foreign key reference
+    type: DataTypes.INTEGER,
+    references: {
+      model: Category, // Foreign key relationship with Category model
+      key: 'category_id',
+    },
+    allowNull: false,
   },
   preparation_time: {
     type: DataTypes.INTEGER,
@@ -50,5 +57,9 @@ const Recipe = sequelize.define('Recipe', {
 }, {
   tableName: "Recipes"
 });
+
+
+Recipe.hasMany(Category, { foreignKey: 'category_id' });
+Category.hasMany(Recipe, { foreignKey: 'category_id' });
 
 export default Recipe;

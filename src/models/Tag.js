@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../../config/dbConfig.js';
-import Recipe from './Recipe.js'; 
 
 const Tag = sequelize.define('Tag', {
   tag_id: {
@@ -12,7 +11,7 @@ const Tag = sequelize.define('Tag', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Recipe, 
+      model: "Recipes", 
       key: 'recipe_id', 
     },
     onDelete: 'CASCADE', 

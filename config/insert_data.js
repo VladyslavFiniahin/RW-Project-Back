@@ -9,12 +9,13 @@ import Preference from '../src/models/Preference.js';
 import Review from '../src/models/Review.js';
 import ActivityHistory from '../src/models/ActivityHistory.js';
 import Tag from '../src/models/Tag.js';
+import Category from '../src/models/Category.js';
 
 const seedDatabase = async () => {
   try {
-    await sequelize.sync({ force: true }); // This will drop the tables if they exist and create new ones
+    await sequelize.sync(); // This will drop the tables if they exist and create new ones
 
-    // Insert Categories
+    // Insert Categories and fetch IDs dynamically
     const categories = await Category.bulkCreate([
       { name: 'Main Course' },
       { name: 'Salad' },
@@ -28,7 +29,13 @@ const seedDatabase = async () => {
       { name: 'Dinner' },
       { name: 'Healthy' },
     ]);
-    
+
+    // Create a map of category names to their respective IDs
+    const categoryIds = categories.reduce((acc, category) => {
+      acc[category.name] = category.category_id; // Adjust if your category ID field is different
+      return acc;
+    }, {});
+
     // Insert Ingredients
     const ingredients = await Ingredient.bulkCreate([
       { name: 'Chicken Breast', category: 'Meat', nutritional_value: 165 },
@@ -38,11 +45,11 @@ const seedDatabase = async () => {
       { name: 'Garlic', category: 'Herb', nutritional_value: 149 },
     ]);
 
-    // Insert Recipes
+    // Insert Recipes using dynamically fetched category IDs
     const recipes = await Recipe.bulkCreate([
-      { title: 'Grilled Chicken', description: 'Delicious grilled chicken with herbs.', cuisine_type: 'American', category: 'Main Course', preparation_time: 15, cooking_time: 30, total_time: 45, difficulty: 'Easy', servings: 4 },
-      { title: 'Broccoli Salad', description: 'Fresh broccoli salad with olive oil dressing.', cuisine_type: 'Mediterranean', category: 'Salad', preparation_time: 10, cooking_time: 5, total_time: 15, difficulty: 'Easy', servings: 2 },
-      { title: 'Garlic Rice', description: 'Fluffy rice infused with garlic flavor.', cuisine_type: 'Asian', category: 'Side Dish', preparation_time: 5, cooking_time: 15, total_time: 20, difficulty: 'Easy', servings: 4 },
+      { title: 'Grilled Chicken', description: 'Delicious grilled chicken with herbs.', cuisine_type: 'American', category_id: categoryIds['Main Course'], preparation_time: 15, cooking_time: 30, total_time: 45, difficulty: 'Easy', servings: 4 },
+      { title: 'Broccoli Salad', description: 'Fresh broccoli salad with olive oil dressing.', cuisine_type: 'Mediterranean', category_id: categoryIds['Salad'], preparation_time: 10, cooking_time: 5, total_time: 15, difficulty: 'Easy', servings: 2 },
+      { title: 'Garlic Rice', description: 'Fluffy rice infused with garlic flavor.', cuisine_type: 'Asian', category_id: categoryIds['Side Dish'], preparation_time: 5, cooking_time: 15, total_time: 20, difficulty: 'Easy', servings: 4 },
     ]);
 
     // Insert Recipe Ingredients
@@ -119,5 +126,6 @@ const seedDatabase = async () => {
     await sequelize.close(); // Close the connection when done
   }
 };
+
 
 seedDatabase();

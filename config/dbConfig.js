@@ -17,6 +17,7 @@ export const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST, // The MySQL service name in docker-compose.test.yml
     dialect: "mysql", // Specify that we're using MySQL
+    logging: false,
   }
 );
 
