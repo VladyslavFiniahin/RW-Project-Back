@@ -10,6 +10,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import express from "express";
 import { sequelize } from "../config/dbConfig.js";
 import RecipesRouter from './routes/recipes.js';
+import UsersRouter from "./routes/users.js";
 import { associateModels } from './models/index.js'; // Import the associateModels function
 
 
@@ -30,13 +31,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use("/api", RecipesRouter)
+app.use("/api", RecipesRouter);
+app.use("/api/users", UsersRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-console.log(process.env.PORT);
+console.log("PORT FROM ENV:", process.env.PORT);
 app.listen(port, () => {
   console.log(`App is listening on the port ${port}`);
 });
@@ -54,7 +56,7 @@ const createConnection = async () => {
 
   // Sync the models (create tables if they do not exist)
   // await sequelize.sync(
-  //   // { force: true } //! only for development
+  //   { force: true } //! only for development
   // );
   associateModels();
 };
