@@ -6,7 +6,7 @@ on:
       - trunk
   pull_request:
     branches:
-      - turnk
+      - trunk
 
 jobs:
   deploy:
