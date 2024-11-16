@@ -23,10 +23,11 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+          ssh -T -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd /home/rom/website/backend
             git checkout trunk
             git pull origin trunk
             npm install
             pm2 restart backend 
+            exit
           EOF
