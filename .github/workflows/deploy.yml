@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -T -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd /home/rom/website/backend
             git checkout trunk
             git pull origin trunk
