@@ -1,0 +1,32 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - trunk
+  pull_request:
+    branches:
+      - turnk
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            cd /home/rom/website/backend
+            git checkout trunk
+            git pull origin trunk
+            npm install
+            pm2 restart backend 
+          EOF
