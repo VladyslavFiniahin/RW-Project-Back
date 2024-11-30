@@ -3,7 +3,7 @@ import { Router } from 'express';
 import {findRecipe} from "../services/recipes.js";
 const router = Router();
 
-router.get('/recipes/search', async function(req, res) {
+router.post('/recipes/search', async function(req, res) {
   try {
     const { category, search_text } = req.body;
     if(category == undefined && search_text == undefined) {
