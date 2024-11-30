@@ -1,4 +1,5 @@
 import { sequelize } from './dbConfig.js'; // Adjust the path as necessary
+import bcrypt from "bcrypt";
 import User from '../src/models/User.js';
 import Ingredient from '../src/models/Ingredient.js';
 import Recipe from '../src/models/Recipe.js';
@@ -10,6 +11,8 @@ import Review from '../src/models/Review.js';
 import ActivityHistory from '../src/models/ActivityHistory.js';
 import Tag from '../src/models/Tag.js';
 import Category from '../src/models/Category.js';
+
+let testingPassword = bcrypt("veryStrongPassword", 10);
 
 const seedDatabase = async () => {
   try {
@@ -74,9 +77,9 @@ const seedDatabase = async () => {
 
     // Insert Users
     const users = await User.bulkCreate([
-      { username: 'john_doe', email: 'john@example.com', avatar: 'avatar1.png', bio: 'Food lover and home cook.' },
-      { username: 'jane_smith', email: 'jane@example.com', avatar: 'avatar2.png', bio: 'Professional chef.' },
-      { username: 'alice_jones', email: 'alice@example.com', avatar: 'avatar3.png', bio: 'Culinary student.' },
+      { username: 'john_doe', email: 'john@example.com', password: testingPassword, avatar: 'avatar1.png', bio: 'Food lover and home cook.' },
+      { username: 'jane_smith', email: 'jane@example.com', password: testingPassword, avatar: 'avatar2.png', bio: 'Professional chef.' },
+      { username: 'alice_jones', email: 'alice@example.com', password: testingPassword, avatar: 'avatar3.png', bio: 'Culinary student.' },
     ]);
 
     // Insert User Saved Recipes
