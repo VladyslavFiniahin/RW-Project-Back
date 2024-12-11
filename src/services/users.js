@@ -7,7 +7,6 @@ const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
 
 export async function register(username, email, password) {
   try {
-
     const existingUser = await User.findOne({
       where: {
         [Op.or]: [{ email }, { username }],
@@ -15,7 +14,7 @@ export async function register(username, email, password) {
     });
 
     if (existingUser) {
-      throw { status: 400, message: "Користувач із таким email або username вже існує" };
+      throw { status: 400, message: "User with this email or username already exists." };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -25,9 +24,9 @@ export async function register(username, email, password) {
       password: hashedPassword,
     });
 
-    return { message: "Реєстрація успішна", userId: result.user_id };
+    return { message: "Registration successful", userId: result.user_id };
   } catch (error) {
-    throw { status: error.status || 500, message: "Помилка реєстрації: " + error.message };
+    throw { status: error.status || 500, message: "Registration error: " + error.message };
   }
 }
 
@@ -35,12 +34,12 @@ export async function login(email, password) {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw { status: 404, message: "Користувача не знайдено" };
+      throw { status: 404, message: "Incorrect login details" };
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw { status: 400, message: "Невірний пароль" };
+      throw { status: 400, message: "Incorrect login details" };
     }
 
     const token = jwt.sign(
@@ -49,19 +48,51 @@ export async function login(email, password) {
       { expiresIn: "1h" }
     );
 
-    return { message: "Вхід успішний", token, userId: user.user_id };
+    return { message: "Login successful", token, userId: user.user_id };
   } catch (error) {
-    throw { status: 400, message: "Помилка входу: " + error.message };
+    throw { status: 400, message: "Login error: " + error.message };
   }
 }
 
-export async function getAllUsers() {
+export async function updateUser(userId, updates) {
   try {
-    const users = await User.findAll({
-      attributes: ["user_id", "username", "email", "avatar", "bio", "createdAt"],
-    });
-    return users;
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      throw { status: 404, message: "User not found" };
+    }
+
+    if (updates.username) {
+      const existingUser = await User.findOne({
+        where: { username: updates.username },
+        attributes: ["user_id"],
+      });
+      if (existingUser && existingUser.user_id !== userId) {
+        throw { status: 400, message: "Username is already taken." };
+      }
+      user.username = updates.username;
+    }
+
+    if (updates.email) {
+      const existingEmail = await User.findOne({
+        where: { email: updates.email },
+        attributes: ["user_id"],
+      });
+      if (existingEmail && existingEmail.user_id !== userId) {
+        throw { status: 400, message: "Email already exist" };
+      }
+      user.email = updates.email;
+    }
+
+    if (updates.password) {
+      const hashedPassword = await bcrypt.hash(updates.password, 10);
+      user.password = hashedPassword;
+    }
+
+    await user.save();
+
+    return { message: "Profile successfully updated" };
   } catch (error) {
-    throw { status: 500, message: "Не вдалося отримати користувачів: " + error.message };
+    throw { status: error.status || 500, message: "Profile update error: " + error.message };
   }
 }
