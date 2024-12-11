@@ -12,7 +12,7 @@ router.post('/recipes/search', async function(req, res) {
 
     res.status(200).json(await findRecipe(category, search_text));
     
-
+    
   } catch (err) {
     if(err.status) {
       res.status(err.status).json({ message: err.message })
