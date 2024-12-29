@@ -3,6 +3,7 @@ import { sequelize } from '../../config/dbConfig.js';
 
 import Category from "./Category.js";
 import Tag from "./Tag.js";
+import Cuisine from "./Cuisine.js";
 
 const Recipe = sequelize.define('Recipe', {
   recipe_id: {
@@ -18,9 +19,13 @@ const Recipe = sequelize.define('Recipe', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  cuisine_type: {
-    type: DataTypes.STRING,
-    allowNull: false
+  cuisine_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Cuisine,
+      key: 'cuisine_id',
+    },
+    allowNull: false,
   },
   category_id: { // Use category_id instead of category for foreign key reference
     type: DataTypes.INTEGER,

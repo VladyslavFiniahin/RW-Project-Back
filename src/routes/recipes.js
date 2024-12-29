@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createRecipe, createCategory, updateRecipe, deleteRecipe  } from "../services/recipes.js";
+import { createRecipe, createCategory, updateRecipe, deleteRecipe } from "../services/recipes.js";
 
 import {findRecipe} from "../services/recipes.js";
 const router = Router();
@@ -50,17 +50,16 @@ router.post("/add-recipe", async (req, res) => {
 
 router.post("/recipes/add", async (req, res) => {
   try {
-    const { title, description, category, cuisine_type, preparation_time, cooking_time, total_time, difficulty, servings, location_map } = req.body;
+    const { title, description, category, cuisine, preparation_time, cooking_time, total_time, difficulty, servings, location_map } = req.body;
 
-    if (!title || !description || !category || !cuisine_type) {
+    if (!title || !description || !category || !cuisine) {
       return res.status(400).json({ message: "Missing required fields" });
     }
-
     const newRecipe = await createRecipe({
       title,
       description,
       category,
-      cuisine_type,
+      cuisine,
       preparation_time,
       cooking_time,
       total_time,

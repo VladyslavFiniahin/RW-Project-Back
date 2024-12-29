@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import Recipe from "../models/Recipe.js";
 import Category from "../models/Category.js";
+import Cuisine from "../models/Cuisine.js";
 
 export async function findRecipe(category, search_text) {
   const whereClause = {};
@@ -14,7 +15,7 @@ export async function findRecipe(category, search_text) {
 
   // get category ID
   if (category) {
-    const categoryId = await getCategoryIdByName(category);
+    const categoryId = await getCategoryIdByName(recipeData.category);
 
     if (categoryId) {
       whereClause.category_id = categoryId;
@@ -34,27 +35,44 @@ export async function findRecipe(category, search_text) {
   }
 }
 
-async function getCategoryIdByName(category_name) {
+export async function getCategoryIdByName(category_name) {
+  if (!category_name) {
+    throw new Error("Category name is required");
+  }
+
   try {
     const category = await Category.findOne({
-      where: {
-        name: category_name,
-      },
+      where: { name: category_name },
     });
 
     if (!category) {
-      throw {
-        status: 500,
-        message: "Could not get category id by name. " + err.message,
-      };
+      throw new Error(`Category '${category_name}' not found`);
     }
 
     return category.category_id;
   } catch (err) {
-    throw { status: 400, message: "Could not get category id" };
+    throw new Error("Error finding category by name: " + err.message);
   }
 }
 
+
+export async function getCuisineIdByName(cuisine_name) {
+  try {
+    const cuisine = await Cuisine.findOne({
+      where: { name: cuisine_name },
+    });
+
+    if (!cuisine) {
+      throw new Error(`Cuisine '${cuisine_name}' not found`);
+    }
+
+    return cuisine.cuisine_id;
+  } catch (err) {
+    throw new Error("Error finding cuisine by name: " + err.message);
+  }
+}
+
+// add category by postman
 export async function createCategory(categoryName) {
   try {
     const existingCategory = await Category.findOne({
@@ -76,9 +94,71 @@ export async function createCategory(categoryName) {
   }
 }
 
+//add category by default, when server start
+const categories = [
+  "Italian",
+  "French",
+  "Spanish",
+  "Japanese",
+  "Chinese",
+  "Mexican",
+  "Indian",
+  "Greek",
+  "Ukrainian",
+  "Turkish",
+  "Korean",
+  "American",
+];
+
+export async function createDefaultCategories() {
+  try {
+    for (const categoryName of categories) {
+      const existingCategory = await Category.findOne({
+        where: { name: categoryName },
+      });
+
+      if (!existingCategory) {
+        await Category.create({ name: categoryName });
+        console.log(`Category '${categoryName}' created.`);
+      }
+    }
+  } catch (err) {
+    console.error("Error creating default categories:", err);
+  }
+}
+//
+
+//add cuisine by default, when server start
+const cuisines = [
+  "Breakfast",
+  "Main Courses",
+  "Snacks",
+  "Desserts",
+  "Salads",
+  "Vegan Dishes",
+  "Drinks",
+];
+
+export async function createDefaultCuisines() {
+  try {
+    for (const cuisineName of cuisines) {
+      const existingCuisine = await Cuisine.findOne({
+        where: { name: cuisineName },
+      });
+
+      if (!existingCuisine) {
+        await Cuisine.create({ name: cuisineName });
+        console.log(`Cuisine '${cuisineName}' created.`);
+      }
+    }
+  } catch (err) {
+    console.error("Error creating default cuisines:", err);
+  }
+}
+//
+
 export async function createRecipe(recipeData) {
   try {
-    await createCategory();
 
     const categoryId = await getCategoryIdByName(recipeData.category);
 
@@ -86,11 +166,17 @@ export async function createRecipe(recipeData) {
       throw new Error("Category not found");
     }
 
+    const cuisineId = await getCuisineIdByName(recipeData.cuisine);
+
+    if (!cuisineId) {
+      throw new Error("Cuisine not found");
+    }
+
     const recipe = await Recipe.create({
       title: recipeData.title,
       description: recipeData.description,
-      cuisine_type: recipeData.cuisine_type,
       category_id: categoryId,
+      cuisine_id: cuisineId,
       preparation_time: recipeData.preparation_time,
       cooking_time: recipeData.cooking_time,
       total_time: recipeData.total_time,
