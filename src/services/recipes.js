@@ -199,8 +199,27 @@ export async function updateRecipe(recipeId, updatedData) {
       throw new Error("Recipe not found");
     }
 
+    if (updatedData.category) {
+      const categoryId = await getCategoryIdByName(updatedData.category);
+      if (!categoryId) {
+        throw new Error("Category not found");
+      }
+      updatedData.category_id = categoryId;
+      delete updatedData.category;
+    }
+
+    if (updatedData.cuisine) {
+      const cuisineId = await getCuisineIdByName(updatedData.cuisine);
+      if (!cuisineId) {
+        throw new Error("Cuisine not found");
+      }
+      updatedData.cuisine_id = cuisineId;
+      delete updatedData.cuisine;
+    }
+
     await recipe.update(updatedData);
     console.log(`Recipe with ID ${recipeId} updated successfully.`);
+
     return recipe;
   } catch (err) {
     console.error("Error updating recipe:", err);
@@ -222,5 +241,43 @@ export async function deleteRecipe(recipeId) {
   } catch (err) {
     console.error("Error deleting recipe:", err);
     throw new Error("Error deleting recipe: " + err.message);
+  }
+}
+
+export async function getRandomRecipe() {
+  try {
+    const recipes = await Recipe.findAll();
+
+    if (recipes.length === 0) {
+      throw new Error('No recipes found');
+    }
+
+    const randomIndex = Math.floor(Math.random() * recipes.length);
+    const randomRecipe = recipes[randomIndex];
+
+    return randomRecipe.recipe_id;
+  } catch (err) {
+    console.error("Error fetching random recipe:", err.message);
+    throw new Error("Error fetching random recipe: " + err.message);
+  }
+}
+
+export async function getLast20Recipes() {
+  try {
+    const last20Recipes = await Recipe.findAll({
+      limit: 20, // обмежуємо кількість рецептів до 20
+      order: [['createdAt', 'DESC']], // сортуємо за датою створення, від найновіших
+      attributes: ['recipe_id'], // вибираємо лише поле recipe_id
+    });
+
+    if (!last20Recipes || last20Recipes.length === 0) {
+      throw new Error('No recipes found');
+    }
+
+    // Повертаємо масив з ID рецептів
+    return last20Recipes.map(recipe => recipe.recipe_id);
+  } catch (err) {
+    console.error("Error fetching last 20 recipes:", err.message);
+    throw new Error("Error fetching last 20 recipes: " + err.message);
   }
 }

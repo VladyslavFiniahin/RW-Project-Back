@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createRecipe, createCategory, updateRecipe, deleteRecipe } from "../services/recipes.js";
+import { createRecipe, createCategory, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes } from "../services/recipes.js";
 
 import {findRecipe} from "../services/recipes.js";
 const router = Router();
@@ -96,5 +96,24 @@ router.delete("/delete-recipe/:id", async (req, res) => {
     res.status(500).json({ message: "Error deleting recipe: " + err.message });
   }
 });
+
+router.get("/random-recipe", async (req, res) => {
+  try {
+    const randomRecipe = await getRandomRecipe();
+    res.status(200).json({ recipe_id: randomRecipe });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching random recipe: " + err.message });
+  }
+});
+
+router.get("/last-20-recipes", async (req, res) => {
+  try {
+    const last20Recipes = await getLast20Recipes();
+    res.status(200).json(last20Recipes); // Повертаємо масив ID останніх 20 рецептів
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching last 20 recipes: " + err.message });
+  }
+});
+
 
 export default router;
