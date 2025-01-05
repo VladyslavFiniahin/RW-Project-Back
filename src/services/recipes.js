@@ -265,16 +265,15 @@ export async function getRandomRecipe() {
 export async function getLast20Recipes() {
   try {
     const last20Recipes = await Recipe.findAll({
-      limit: 20, // обмежуємо кількість рецептів до 20
-      order: [['createdAt', 'DESC']], // сортуємо за датою створення, від найновіших
-      attributes: ['recipe_id'], // вибираємо лише поле recipe_id
+      limit: 20,
+      order: [['createdAt', 'DESC']],
+      attributes: ['recipe_id'],
     });
 
     if (!last20Recipes || last20Recipes.length === 0) {
       throw new Error('No recipes found');
     }
-
-    // Повертаємо масив з ID рецептів
+    
     return last20Recipes.map(recipe => recipe.recipe_id);
   } catch (err) {
     console.error("Error fetching last 20 recipes:", err.message);

@@ -109,7 +109,7 @@ router.get("/random-recipe", async (req, res) => {
 router.get("/last-20-recipes", async (req, res) => {
   try {
     const last20Recipes = await getLast20Recipes();
-    res.status(200).json(last20Recipes); // Повертаємо масив ID останніх 20 рецептів
+    res.status(200).json(last20Recipes);
   } catch (err) {
     res.status(500).json({ message: "Error fetching last 20 recipes: " + err.message });
   }
