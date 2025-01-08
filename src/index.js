@@ -12,6 +12,7 @@ import { sequelize } from "../config/dbConfig.js";
 import RecipesRouter from './routes/recipes.js';
 import UsersRouter from "./routes/users.js";
 import { associateModels } from './models/index.js'; // Import the associateModels function
+import { createDefaultCategories, createDefaultCuisines } from "./services/recipes.js";
 
 
 // models
@@ -26,6 +27,7 @@ import Review from "./models/Review.js";
 import User from "./models/User.js";
 import UserSavedRecipe from "./models/UserSavedRecipe.js";
 import Tag from "./models/Tag.js";
+import Cuisine from "./models/Cuisine.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -50,6 +52,11 @@ const createConnection = async () => {
     console.log(
       "Connection to the database has been established successfully."
     );
+
+    await createDefaultCategories();
+    await createDefaultCuisines();
+
+
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }

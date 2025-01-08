@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { createRecipe, createCategory, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes } from "../services/recipes.js";
 
 import {findRecipe} from "../services/recipes.js";
 const router = Router();
@@ -21,5 +22,98 @@ router.post('/recipes/search', async function(req, res) {
     }
   }
 })
+
+router.post("/create-category", async (req, res) => {
+  const { categoryName } = req.body;
+
+  if (!categoryName) {
+    return res.status(400).json({ message: "Category name is required" });
+  }
+
+  try {
+    await createCategory(categoryName);
+    res.status(200).json({ message: `Category '${categoryName}' created or already exists.` });
+  } catch (err) {
+    res.status(500).json({ message: "Error creating category: " + err.message });
+  }
+});
+
+router.post("/add-recipe", async (req, res) => {
+  try {
+    const recipeData = req.body;
+    const recipe = await createRecipe(recipeData);
+    res.status(201).json(recipe);
+  } catch (err) {
+    res.status(500).json({ message: "Error adding recipe: " + err.message });
+  }
+});
+
+router.post("/recipes/add", async (req, res) => {
+  try {
+    const { title, description, category, cuisine, preparation_time, cooking_time, total_time, difficulty, servings, location_map } = req.body;
+
+    if (!title || !description || !category || !cuisine) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+    const newRecipe = await createRecipe({
+      title,
+      description,
+      category,
+      cuisine,
+      preparation_time,
+      cooking_time,
+      total_time,
+      difficulty,
+      servings,
+      location_map,
+    });
+
+    res.status(201).json(newRecipe);
+  } catch (err) {
+    res.status(400).json({ message: "Error adding recipe: " + err.message });
+  }
+});
+
+router.put("/update-recipe/:id", async (req, res) => {
+  const recipeId = req.params.id;
+  const updatedData = req.body;
+
+  try {
+    const updatedRecipe = await updateRecipe(recipeId, updatedData);
+    res.status(200).json(updatedRecipe);
+  } catch (err) {
+    res.status(500).json({ message: "Error updating recipe: " + err.message });
+  }
+});
+
+router.delete("/delete-recipe/:id", async (req, res) => {
+  const recipeId = req.params.id;
+
+  try {
+    const result = await deleteRecipe(recipeId);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting recipe: " + err.message });
+  }
+});
+
+router.get("/random-recipe", async (req, res) => {
+  try {
+    const randomRecipe = await getRandomRecipe();
+    res.status(200).json({ recipe_id: randomRecipe });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching random recipe: " + err.message });
+  }
+});
+
+router.get("/last-20-recipes", async (req, res) => {
+  try {
+    const last20Recipes = await getLast20Recipes();
+    res.status(200).json(last20Recipes);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching last 20 recipes: " + err.message });
+  }
+});
+//
 
 export default router;
