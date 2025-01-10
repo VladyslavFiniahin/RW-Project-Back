@@ -281,3 +281,47 @@ export async function getLast20Recipes() {
   }
 }
 //
+
+export async function getRecipesByCategoryAndCuisine(categoryName, cuisineName) {
+  try {
+    const whereClause = {};
+
+    if (categoryName) {
+      const category = await Category.findOne({
+        where: { name: categoryName },
+      });
+
+      if (!category) {
+        throw new Error(`Category '${categoryName}' not found`);
+      }
+
+      whereClause.category_id = category.category_id;
+    }
+
+    if (cuisineName) {
+      const cuisine = await Cuisine.findOne({
+        where: { name: cuisineName },
+      });
+
+      if (!cuisine) {
+        throw new Error(`Cuisine '${cuisineName}' not found`);
+      }
+
+      whereClause.cuisine_id = cuisine.cuisine_id;
+    }
+
+    const recipes = await Recipe.findAll({
+      where: whereClause,
+      attributes: ['recipe_id', 'title'],
+    });
+
+    if (!recipes || recipes.length === 0) {
+      throw new Error('No recipes found for this category and cuisine');
+    }
+
+    return recipes;
+  } catch (err) {
+    console.error("Error fetching recipes by category and cuisine:", err.message);
+    return [];
+  }
+}
