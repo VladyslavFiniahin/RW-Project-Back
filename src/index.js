@@ -53,19 +53,18 @@ const createConnection = async () => {
       "Connection to the database has been established successfully."
     );
 
-    await createDefaultCategories();
-    await createDefaultCuisines();
-
-
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
 
   // Sync the models (create tables if they do not exist)
-  // await sequelize.sync(
-  //   { force: true } //! only for development
-  // );
+  await sequelize.sync(
+    { force: true } //! only for development
+  );
   associateModels();
+
+  await createDefaultCategories();
+  await createDefaultCuisines();
 };
 
 createConnection();
