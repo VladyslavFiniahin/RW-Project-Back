@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createRecipe, createCategory, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes } from "../services/recipes.js";
+import { createRecipe, createCategory, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes, getRecipesByCategoryAndCuisine } from "../services/recipes.js";
 
 import {findRecipe} from "../services/recipes.js";
 const router = Router();
@@ -115,5 +115,24 @@ router.get("/last-20-recipes", async (req, res) => {
   }
 });
 //
+
+router.get("/recipes/filter", async (req, res) => {
+  const { category, cuisine } = req.query;
+
+  try {
+    if (!category && !cuisine) {
+      return res.status(400).json({ message: "At least one filter (category or cuisine) required" });
+    }
+
+    const recipes = await getRecipesByCategoryAndCuisine(category, cuisine);
+    if (recipes.length === 0) {
+      return res.status(404).json({ message: `No recipes found for category '${category}' and cuisine '${cuisine}'` });
+    }
+    res.status(200).json(recipes);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 
 export default router;
