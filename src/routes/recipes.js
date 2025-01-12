@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createRecipe, createCategory, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes, getRecipesByCategoryAndCuisine } from "../services/recipes.js";
+import { createRecipe, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes, getRecipesByCategoryAndCuisine } from "../services/recipes.js";
 
 import {findRecipe} from "../services/recipes.js";
 const router = Router();
@@ -22,21 +22,6 @@ router.post('/recipes/search', async function(req, res) {
     }
   }
 })
-
-router.post("/create-category", async (req, res) => {
-  const { categoryName } = req.body;
-
-  if (!categoryName) {
-    return res.status(400).json({ message: "Category name is required" });
-  }
-
-  try {
-    await createCategory(categoryName);
-    res.status(200).json({ message: `Category '${categoryName}' created or already exists.` });
-  } catch (err) {
-    res.status(500).json({ message: "Error creating category: " + err.message });
-  }
-});
 
 router.post("/add-recipe", async (req, res) => {
   try {
@@ -78,13 +63,23 @@ router.put("/update-recipe/:id", async (req, res) => {
   const recipeId = req.params.id;
   const updatedData = req.body;
 
+  if (!updatedData || Object.keys(updatedData).length === 0) {
+    return res.status(400).json({ message: "Request body is required" });
+  }
+
   try {
     const updatedRecipe = await updateRecipe(recipeId, updatedData);
     res.status(200).json(updatedRecipe);
   } catch (err) {
+    if (err.message === "Recipe not found") {
+      return res.status(404).json({ message: "Recipe not found" });
+    } else if (err.message === "No data provided to update" || err.message.includes("not found")) {
+      return res.status(400).json({ message: "Invalid or incomplete data provided" });
+    }
     res.status(500).json({ message: "Error updating recipe: " + err.message });
   }
 });
+
 
 router.delete("/delete-recipe/:id", async (req, res) => {
   const recipeId = req.params.id;
@@ -93,7 +88,11 @@ router.delete("/delete-recipe/:id", async (req, res) => {
     const result = await deleteRecipe(recipeId);
     res.status(200).json(result);
   } catch (err) {
-    res.status(500).json({ message: "Error deleting recipe: " + err.message });
+    if (err.message === "Recipe not found") {
+      res.status(404).json({ message: "Recipe not found" });
+    } else {
+      res.status(500).json({ message: "Error deleting recipe: " + err.message });
+    }
   }
 });
 

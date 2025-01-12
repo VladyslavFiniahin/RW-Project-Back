@@ -72,28 +72,6 @@ export async function getCuisineIdByName(cuisine_name) {
   }
 }
 
-// add category by postman
-export async function createCategory(categoryName) {
-  try {
-    const existingCategory = await Category.findOne({
-      where: {
-        name: categoryName,
-      },
-    });
-
-    if (!existingCategory) {
-      const category = await Category.create({
-        name: categoryName,
-      });
-      console.log(`Category '${categoryName}' created.`);
-    } else {
-      console.log(`Category '${categoryName}' already exists.`);
-    }
-  } catch (err) {
-    console.error("Error creating category:", err);
-  }
-}
-
 //add category by default, when server start
 const categories = [
   "Italian",
@@ -193,6 +171,10 @@ export async function createRecipe(recipeData) {
 
 export async function updateRecipe(recipeId, updatedData) {
   try {
+    if (!updatedData || Object.keys(updatedData).length === 0) {
+      throw new Error("No data provided to update");
+    }
+
     const recipe = await Recipe.findByPk(recipeId);
 
     if (!recipe) {
@@ -239,6 +221,9 @@ export async function deleteRecipe(recipeId) {
     console.log(`Recipe with ID ${recipeId} deleted successfully.`);
     return { message: `Recipe with ID ${recipeId} deleted successfully.` };
   } catch (err) {
+    if (err.message === "Recipe not found") {
+      throw new Error("Recipe not found");
+    }
     console.error("Error deleting recipe:", err);
     throw new Error("Error deleting recipe: " + err.message);
   }
