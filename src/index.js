@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
 import path from "path";
+import cors from 'cors';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,7 +36,7 @@ const port = process.env.PORT || 3000;
 // Serve static files for images
 app.use('/img/recipes', express.static(path.join(process.cwd(), 'img/recipes')));
 
-
+app.use(cors());
 app.use(express.json());
 app.use("/api", RecipesRouter);
 app.use("/api/users", UsersRouter);
