@@ -310,3 +310,19 @@ export async function getRecipesByCategoryAndCuisine(categoryName, cuisineName) 
     return [];
   }
 }
+
+export async function getAllRecipes() {
+  try {
+    const recipes = await Recipe.findAll();
+
+    const recipesWithImages = recipes.map(recipe => ({
+      ...recipe.toJSON(),
+      image_url: `../..${recipe.image_url}`,
+    }));
+
+    res.status(200).json(recipesWithImages);
+  } catch (error) {
+    console.error('Error fetching recipes:', error);
+    res.status(500).json({ error: 'Failed to fetch recipes' });
+  }
+}

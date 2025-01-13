@@ -32,6 +32,10 @@ import Cuisine from "./models/Cuisine.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Serve static files for images
+app.use('/img/recipes', express.static(path.join(process.cwd(), 'img/recipes')));
+
+
 app.use(express.json());
 app.use("/api", RecipesRouter);
 app.use("/api/users", UsersRouter);
