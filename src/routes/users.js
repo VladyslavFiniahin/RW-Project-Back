@@ -37,7 +37,11 @@ router.put("/update", async (req, res) => {
   const { userId, username, email, password } = req.body;
 
   if (!userId) {
-    return res.status(400).json({ message: "User ID required" });
+    return res.status(400).json({ message: "User ID is required." });
+  }
+
+  if (!username && !email && !password) {
+    return res.status(400).json({ message: "At least one field (username, email, or password) is required to update." });
   }
 
   try {
@@ -47,5 +51,6 @@ router.put("/update", async (req, res) => {
     return res.status(error.status || 500).json({ message: error.message });
   }
 });
+
 
 export default router;
