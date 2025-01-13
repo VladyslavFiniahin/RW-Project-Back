@@ -17,7 +17,7 @@ const Recipe = sequelize.define('Recipe', {
   },
   description: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true //change to false later
   },
   cuisine_id: {
     type: DataTypes.INTEGER,
@@ -37,28 +37,32 @@ const Recipe = sequelize.define('Recipe', {
   },
   preparation_time: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true //change to false later
   },
   cooking_time: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true //change to false later
   },
   total_time: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true //change to false later
   },
   difficulty: {
     type: DataTypes.ENUM('easy', 'medium', 'hard'),
-    allowNull: false
+    allowNull: true //change to false later
   },
   servings: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true //change to false later
   },
   location_map: {
     type: DataTypes.STRING,
     allowNull: true
   },
+  image_url: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 }, {
   tableName: "Recipes"
 });
