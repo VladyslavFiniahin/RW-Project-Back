@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createRecipe, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes, getRecipesByCategoryAndCuisine, getAllRecipes } from "../services/recipes.js";
+import { createRecipe, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes, getRecipesByCategoryAndCuisine, getAllRecipes, getLastFiveRecipes } from "../services/recipes.js";
 
 import {findRecipe} from "../services/recipes.js";
 const router = Router();
@@ -133,6 +133,7 @@ router.get("/recipes/filter", async (req, res) => { //! change to post later
   }
 });
 
+// gotta remake that if needed
 router.get("/recipes/getall", async (req, res) => {
   try {
     const recipes = await getAllRecipes();
@@ -143,6 +144,32 @@ router.get("/recipes/getall", async (req, res) => {
     res.status(200).json(recipes);
   } catch(err) {
     res.status(500).json({message: err.message});
+  }
+});
+
+router.get("/recipes/getlast10", async (req, res) => {
+  try {
+    const recipes = await getAllRecipes();
+    if(recipes.length === 0) {
+      return res.status(404).json({ message: `No recipes found` });
+    }
+
+    res.status(200).json(recipes);
+  } catch(err) {
+    res.status(500).json({message: err.message});
+  }
+});
+
+router.get("/recipes/getlast5", async (req, res) => {
+  try {
+    const recipes = await getLastFiveRecipes();
+    if (recipes.length === 0) {
+      return res.status(404).json({ message: `No recipes found` });
+    }
+
+    res.status(200).json(recipes);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

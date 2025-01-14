@@ -326,3 +326,22 @@ export async function getAllRecipes() {
     throw new Error('Failed to fetch recipes');
   }
 }
+
+export async function getLastFiveRecipes() {
+  try {
+    const recipes = await Recipe.findAll({
+      limit: 5,
+      order: [['recipe_id', 'DESC']] // Orders by id in descending order to get the last 5 recipes
+    });
+
+    const recipesWithImages = recipes.map(recipe => ({
+      ...recipe.toJSON(),
+      image_url: `http://localhost:3001${recipe.image_url}`,
+    }));
+
+    return recipesWithImages;
+  } catch (error) {
+    console.error('Error fetching recipes:', error);
+    throw new Error('Failed to fetch recipes');
+  }
+}
