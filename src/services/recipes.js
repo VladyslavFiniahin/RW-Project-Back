@@ -317,7 +317,7 @@ export async function getAllRecipes() {
 
     const recipesWithImages = recipes.map(recipe => ({
       ...recipe.toJSON(),
-      image_url: `http://localhost:3001${recipe.image_url}`,
+      image_url: `http://94.231.178.180:3001${recipe.image_url}`,
     }));
 
     return recipesWithImages;
@@ -336,7 +336,7 @@ export async function getLastTwentyRecipes() {
 
     const recipesWithImages = recipes.map(recipe => ({
       ...recipe.toJSON(),
-      image_url: `http://localhost:3001${recipe.image_url}`,
+      image_url: `http://94.231.178.180:3001${recipe.image_url}`,
     }));
 
     return recipesWithImages;
