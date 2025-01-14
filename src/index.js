@@ -36,7 +36,13 @@ const port = process.env.PORT || 3000;
 // Serve static files for images
 app.use('/img', express.static(path.join(__dirname, '/img')));
 
-app.use(cors());
+app.use(
+  cors({
+      origin: 'http://localhost:3001', // Allow specific origin
+      methods: ['GET', 'POST'],       // Allow specific methods
+      credentials: true,              // Allow cookies if needed
+  })
+);
 app.use(express.json());
 app.use("/api", RecipesRouter);
 app.use("/api/users", UsersRouter);
