@@ -327,10 +327,10 @@ export async function getAllRecipes() {
   }
 }
 
-export async function getLastFiveRecipes() {
+export async function getLastTwentyRecipes() {
   try {
     const recipes = await Recipe.findAll({
-      limit: 5,
+      limit: 20,
       order: [['recipe_id', 'DESC']] // Orders by id in descending order to get the last 5 recipes
     });
 

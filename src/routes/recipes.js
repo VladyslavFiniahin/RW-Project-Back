@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createRecipe, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes, getRecipesByCategoryAndCuisine, getAllRecipes, getLastFiveRecipes } from "../services/recipes.js";
+import { createRecipe, updateRecipe, deleteRecipe, getRandomRecipe, getLast20Recipes, getRecipesByCategoryAndCuisine, getAllRecipes, getLastTwentyRecipes } from "../services/recipes.js";
 
 import {findRecipe} from "../services/recipes.js";
 const router = Router();
@@ -160,9 +160,9 @@ router.get("/recipes/getlast10", async (req, res) => {
   }
 });
 
-router.get("/recipes/getlast5", async (req, res) => {
+router.get("/recipes/getlast20", async (req, res) => {
   try {
-    const recipes = await getLastFiveRecipes();
+    const recipes = await getLastTwentyRecipes();
     if (recipes.length === 0) {
       return res.status(404).json({ message: `No recipes found` });
     }
