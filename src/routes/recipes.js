@@ -133,7 +133,7 @@ router.get("/recipes/filter", async (req, res) => { //! change to post later
   }
 });
 
-router.get("/recipes/getall", async(req,res) => {
+router.get("/recipes/getall", async (req, res) => {
   try {
     const recipes = await getAllRecipes();
     if(recipes.length === 0) {

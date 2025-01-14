@@ -34,7 +34,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Serve static files for images
-app.use('/img/recipes', express.static(path.join(process.cwd(), 'img/recipes')));
+app.use('/img', express.static(path.join(__dirname, '/img')));
 
 app.use(cors());
 app.use(express.json());
@@ -64,7 +64,7 @@ const createConnection = async () => {
 
   // Sync the models (create tables if they do not exist)
   await sequelize.sync(
-    { force: true } //! only for development
+    // { force: true } //! only for development
   );
   associateModels();
 

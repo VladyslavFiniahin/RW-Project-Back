@@ -70,12 +70,6 @@ const seedDatabase = async () => {
         category_id: 1, // Italian
       },
       {
-        title: 'Meat Dish',
-        image_url: '/img/recipes/meat-dish.jpg',
-        cuisine_id: 2, // Main Courses
-        category_id: 1, // Italian
-      },
-      {
         title: 'Pasta Carbonara',
         image_url: '/img/recipes/Pasta-Carbonara.jpg',
         cuisine_id: 2, // Main Courses
@@ -152,7 +146,7 @@ const seedDatabase = async () => {
       {
         title: 'Polenta',
         image_url: '/img/recipes/Polenta.jpg',
-        cuisine_id: 6, // Vegan Dishes
+        cuisine_id: 2, // Vegan Dishes
         category_id: 1, // Italian
       },
       {

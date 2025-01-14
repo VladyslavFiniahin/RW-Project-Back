@@ -317,12 +317,12 @@ export async function getAllRecipes() {
 
     const recipesWithImages = recipes.map(recipe => ({
       ...recipe.toJSON(),
-      image_url: `../..${recipe.image_url}`,
+      image_url: `http://localhost:3001${recipe.image_url}`,
     }));
 
-    res.status(200).json(recipesWithImages);
+    return recipesWithImages;
   } catch (error) {
     console.error('Error fetching recipes:', error);
-    res.status(500).json({ error: 'Failed to fetch recipes' });
+    throw new Error('Failed to fetch recipes');
   }
 }
