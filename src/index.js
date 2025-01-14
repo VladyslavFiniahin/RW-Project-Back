@@ -38,7 +38,7 @@ app.use('/img', express.static(path.join(__dirname, '/img')));
 
 app.use(
   cors({
-      origin: 'http://localhost:3000', // Allow specific origin
+      origin: 'http://94.231.178.180', // Allow specific origin
       methods: ['GET', 'POST'],       // Allow specific methods
       credentials: true,              // Allow cookies if needed
   })
