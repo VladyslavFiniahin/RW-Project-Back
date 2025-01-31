@@ -205,7 +205,7 @@ export async function updateRecipe(recipeId, updatedData) {
     return recipe;
   } catch (err) {
     console.error("Error updating recipe:", err);
-    throw new Error("Error updating recipe: " + err.message);
+    throw err;
   }
 }
 
